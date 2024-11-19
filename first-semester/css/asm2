@@ -1,0 +1,53 @@
+LXI H, 0x0000
+MOV D, M
+CPI 1
+
+LOOP1: LXI H, 0x0001 ; array start mem address
+MVI B, 0 ; set swap flag to 0
+MVI C, 0 ; set counter to 0
+
+; load n and n+1 values
+LOOP2: INR C
+MOV E, M	; load from memory to E register 
+INR L		; increment memory pointer
+MOV H, M	; load from memory to H register 
+
+; determine sorting strategy desc/asc
+MOV A, D
+CPI 1
+JC DESC
+
+; compare n and n + 1 values, swap if n > n+1
+ASC: MOV A, H
+CMP E ; if H > E then C = 1
+JNC SKIPSWAP
+JMP SWAP
+
+; compare n and n + 1 values, swap if n < n+1
+DESC: MOV A, H
+CMP E ; if H > E then C = 1
+JC SKIPSWAP
+
+SWAP: MVI B, 1 ; set swap flag to 1
+MOV A, H
+MVI H, 0x00
+MOV M, E
+DCR L
+MOV M, A
+INR L
+
+; check if counter is greater than array length -1
+; if so then end loop
+SKIPSWAP: MVI A, 3
+CMP C
+JNC LOOP2
+
+; check if swap was done during whole bubble cycle
+; if not then end loop
+MOV A, B
+CPI 1 ; if B >= 1 then jump to loop, else stop
+JNC LOOP1
+
+JMP END
+
+END: HLT

@@ -1,0 +1,26 @@
+module chip4to7bitdecoder (
+    input x0,
+    input x1,
+    input x2,
+    input x3,
+    output TL,
+    output M,
+  	output T,
+  	output TR,
+	output BL,
+  	output B,
+  	output D,
+  	output BR
+	); 
+  
+  assign TL = (!x1 && !x2 && !x3) || (x0 && !x1 && x2 && x3) || (x0 && x1 && x2 && !x3) || (x0 && x1 && !x2 && x3);
+  assign M = (!x0 && !x2 && !x3) || (x0 && x1 && !x2 && x3) || (x0 && x1 && x2);
+  assign T = (x0 && x1 && x2);
+  assign TR = (!x0 && x1 && !x2 && !x3) || (x0 && !x2 && x3) || (x0 && x1 && x2);
+  assign BL = (!x0 && !x1 && !x2 && !x3) || (x0 && x1 && x2) || (x0 && x2 && x3);
+  assign B = (!x0 && !x1 && !x2 && !x3) || (x0 && !x1 && x3) || (x0 && x2 && x3);
+  assign D = 0;
+  assign BR = (!x0 && !x2 && !x3) || (x0 && !x2 && x3);
+   
+    
+endmodule
