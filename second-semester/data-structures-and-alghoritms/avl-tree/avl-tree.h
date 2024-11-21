@@ -31,7 +31,7 @@ void _balance(struct AVLTree *self);
 
 void addNodeRecursively(struct AVLTreeNode *newNode, struct AVLTreeNode *avlTreeNode);
 void removeNodeByValueRecursively(int value, struct AVLTreeNode *avlTreeNode);
-void printTreeRecursively(struct AVLTreeNode *node, int *greatest, int *width, int *heigth, int treeMatrix[][4]);
-void getTreeDimensionRecursively(struct AVLTreeNode *node, int *greatest, int *width, int *height, int *maxWidth, int *maxHeight);
+void printTreeRecursively(struct AVLTreeNode *node, int *width, int *heigth, int **treeMatrix);
+void getTreeDimensionRecursively(struct AVLTreeNode *node, int *width, int *height, int *maxWidth, int *maxHeight);
 struct TreeDimension *getTreeDimension(struct AVLTreeNode *rootNode);
 void printTree(struct AVLTree *self);
