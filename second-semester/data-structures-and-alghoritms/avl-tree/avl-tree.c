@@ -133,25 +133,25 @@ void printTree(struct AVLTree *self)
 
         struct TreeDimension *treeDimension = getTreeDimension(self->rootNode);
 
-        int **treeMatrix = malloc(sizeof(int *) * treeDimension->height + 1);
+        int **treeMatrix = malloc(sizeof(int *) * treeDimension->height);
         // init tree matrix
-        for (int i = 0; i < treeDimension->height + 1; i++)
+        for (int i = 0; i < treeDimension->height; i++)
         {
             treeMatrix[i] = malloc(sizeof(int *));
-            for (int j = 0; j < (treeDimension->width + 1) * 2; j++)
+            for (int j = 0; j < (treeDimension->width) * 2; j++)
             {
-                treeMatrix[i][j] = malloc(sizeof(int));
-                treeMatrix[i][j] = NULL;
+                treeMatrix[i][j] = (int *)malloc(sizeof(int));
+                treeMatrix[i][j] = (int *)NULL;
             }
         }
 
-        width = treeDimension->width + 1;
+        width = treeDimension->width;
 
         printTreeRecursively(self->rootNode, &width, &height, treeMatrix);
 
-        for (int i = 0; i < treeDimension->height + 1; i++)
+        for (int i = 0; i < treeDimension->height; i++)
         {
-            for (int j = 0; j < (treeDimension->width + 1) * 2; j++)
+            for (int j = 0; j < (treeDimension->width) * 2; j++)
             {
                 if (treeMatrix[i][j] != NULL)
                 {
@@ -166,11 +166,9 @@ void printTree(struct AVLTree *self)
         }
     }
 }
-// TODO:
-// work on correct values for treeDimension
+
 void printTreeRecursively(struct AVLTreeNode *node, int *width, int *height, int **treeMatrix)
 {
-
     if (node->leftChild)
     {
         *height = *height + 1;
@@ -180,7 +178,11 @@ void printTreeRecursively(struct AVLTreeNode *node, int *width, int *height, int
         *width = *width + 1;
     }
 
-    printf("%d - width: %d height: %d\n", node->value, (*width), (*height));
+    printf("value: %d", node->value);
+    if(node->leftChild) printf(", leftChildValue: %d", node->leftChild->value);
+    if(node->rightChild) printf(", rightChildValue: %d", node->rightChild->value);
+    printf("\n");
+     
     treeMatrix[*height][*width] = node->value;
 
     if (node->rightChild)
@@ -202,10 +204,8 @@ struct TreeDimension *getTreeDimension(struct AVLTreeNode *rootNode)
 
     getTreeDimensionRecursively(rootNode, &width, &height, &maxWidth, &maxHeight);
     struct TreeDimension *treeDimension = (struct TreeDimension *)malloc(sizeof(struct TreeDimension));
-    treeDimension->height = maxHeight;
-    treeDimension->width = maxWidth;
-
-    printf("maxWidth %d, maxHeight %d \n", maxWidth, maxHeight);
+    treeDimension->height = maxHeight++;
+    treeDimension->width = maxWidth++;
 
     return treeDimension;
 }
