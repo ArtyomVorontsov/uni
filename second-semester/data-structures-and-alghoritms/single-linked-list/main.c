@@ -4,9 +4,12 @@
 
 int main()
 {
+    struct SLLNode *node;
 
+    // Get new single linked list
     struct SLL *sll = getSLL();
 
+    // Add single linked list values
     sll->addNode(sll, "7");
     sll->addNode(sll, "6");
     sll->addNode(sll, "12");
@@ -14,27 +17,22 @@ int main()
     sll->addNode(sll, "13");
     sll->addNode(sll, "4");
 
-    struct SLLNode *node = sll->firstNode;
-
-    // while (node != NULL)
-    // {
-    //     printf("%s\n", node->value);
-    //     node = node->nextNode;
-    // }
-
-    node = sll->firstNode;
+    // Delete node by value
     sll->deleteNode(sll, "3");
 
+    // Print single linked list
+    node = sll->firstNode;
     while (node != NULL)
     {
         printf("%s\n", node->value);
         node = node->nextNode;
     }
 
-    printf("\n\nquick sort:\n");
-
+    // Sort single linked list
     sll->sortList(sll);
 
+    // Print single linked list after sorting
+    printf("\n\nQuick sort:\n");
     node = sll->firstNode;
     while (node != NULL)
     {
