@@ -10,19 +10,23 @@ struct AVLTree *getAVLTree()
     avlTree->addNode = addNode;
     avlTree->removeNode = removeNode;
     avlTree->_balance = _balance;
-    avlTree->_checkBalance = _checkBalance;
     avlTree->printTree = printTree;
 
     return avlTree;
 }
 
-void addNode(struct AVLTree *self, int value)
+struct AVLTreeNode *newNode(int value)
 {
     struct AVLTreeNode *newNode = (struct AVLTreeNode *)malloc(sizeof(struct AVLTreeNode));
     newNode->leftChild = NULL;
     newNode->rightChild = NULL;
     newNode->value = value;
 
+    return newNode;
+}
+
+void addNode(struct AVLTree *self, struct AVLTreeNode *newNode)
+{
     if (self->rootNode)
     {
         addNodeRecursively(newNode, self->rootNode);
@@ -30,6 +34,12 @@ void addNode(struct AVLTree *self, int value)
     else
     {
         self->rootNode = newNode;
+    }
+
+    struct AVLTreeNode *inbalancedNode = NULL;
+    if (((inbalancedNode = _getInbalancedSubtreeRotationNode(newNode)) != NULL) && newNode->parent)
+    {
+        _balance(self, inbalancedNode);
     }
 }
 
@@ -109,129 +119,227 @@ void removeNodeByValueRecursively(int value, struct AVLTreeNode *avlTreeNode)
     return;
 }
 
-void _checkBalance(struct AVLTree *self)
+struct AVLTreeNode *_getInbalancedSubtreeRotationNode(struct AVLTreeNode *newNode)
 {
+    int maxHeightLeftSubtree = 0;
+    int maxHeightRightSubtree = 0;
+    bool isBallanced = true;
+
+    struct AVLTreeNode *node = newNode;
+
+    while (node && isBallanced)
+    {
+        maxHeightLeftSubtree = _getTreeDepthRecursively(node->leftChild);
+        maxHeightRightSubtree = _getTreeDepthRecursively(node->rightChild);
+
+        isBallanced = abs(maxHeightLeftSubtree - maxHeightRightSubtree) <= 1;
+
+        if (isBallanced == false)
+        {
+            if (maxHeightLeftSubtree - maxHeightRightSubtree > 0)
+            {
+                node = node->leftChild;
+            }
+            else
+            {
+                node = node->rightChild;
+            }
+            break;
+        }
+
+        maxHeightLeftSubtree = 0;
+        maxHeightRightSubtree = 0;
+
+        node = node->parent;
+    }
+
+    if (isBallanced)
+        node = NULL;
+
+    return node;
 }
 
-void _balance(struct AVLTree *self)
+int _getTreeDepthRecursively(struct AVLTreeNode *node)
 {
+    if (!node)
+        return -1;
+
+    int heightLeft = _getTreeDepthRecursively(node->leftChild);
+    int heightRight = _getTreeDepthRecursively(node->rightChild);
+
+    return (heightLeft > heightRight ? heightLeft : heightRight) + 1;
+}
+
+void _balance(struct AVLTree *self, struct AVLTreeNode *rotationNode)
+{
+    struct AVLTreeNode *inbalancedNode = rotationNode->parent;
+    struct AVLTreeNode *newParent = inbalancedNode->parent;
+    struct AVLTreeNode *temp = NULL;
+    int leftTreeDepth = 0;
+    int rightTreeDepth = 0;
+
+    leftTreeDepth = _getTreeDepthRecursively(inbalancedNode->leftChild);
+    rightTreeDepth = _getTreeDepthRecursively(inbalancedNode->rightChild);
+
+    if ((leftTreeDepth - rightTreeDepth) > 0)
+    {
+
+        if (rotationNode->rightChild != NULL && rotationNode->leftChild == NULL)
+        {
+
+            // double right rotation
+            rotationNode = rotationNode->rightChild;
+            rotationNode->leftChild = rotationNode->parent;
+            rotationNode->parent->rightChild = NULL;
+
+            if (inbalancedNode == inbalancedNode->parent->leftChild)
+            {
+                inbalancedNode->parent->leftChild = rotationNode;
+                rotationNode->rightChild = rotationNode->parent;
+                rotationNode->rightChild->parent = rotationNode;
+                rotationNode->parent = newParent;
+            }
+            else
+            {
+                inbalancedNode->parent->rightChild = rotationNode;
+                rotationNode->rightChild = rotationNode->parent;
+                rotationNode->rightChild->parent = rotationNode;
+                rotationNode->parent = newParent;
+            }
+            inbalancedNode->parent = rotationNode;
+            rotationNode->rightChild = inbalancedNode;
+            inbalancedNode->leftChild = NULL;
+        }
+        else
+        {
+            // right rotation
+            if (rotationNode->rightChild)
+            {
+                temp = rotationNode->rightChild;
+                temp->parent = NULL;
+            }
+
+            if (inbalancedNode->parent != NULL && inbalancedNode == inbalancedNode->parent->leftChild)
+            {
+                inbalancedNode->parent->leftChild = rotationNode;
+                rotationNode->rightChild = rotationNode->parent;
+                rotationNode->rightChild->parent = rotationNode;
+                rotationNode->parent = newParent;
+            }
+            else if (inbalancedNode->parent != NULL && inbalancedNode == inbalancedNode->parent->rightChild)
+            {
+                inbalancedNode->parent->rightChild = rotationNode;
+                rotationNode->rightChild = rotationNode->parent;
+                rotationNode->rightChild->parent = rotationNode;
+                rotationNode->parent = newParent;
+            }
+            else
+            {
+                rotationNode->rightChild = rotationNode->parent;
+                rotationNode->rightChild->parent = rotationNode;
+                rotationNode->parent = NULL;
+                self->rootNode = rotationNode;
+            }
+            inbalancedNode->parent = rotationNode;
+            inbalancedNode->leftChild = NULL;
+        }
+
+        if (temp != NULL)
+        {
+            addNode(self, temp);
+        }
+    }
+    else
+    {
+        if (rotationNode->rightChild == NULL && rotationNode->leftChild != NULL)
+        {
+
+            // double left rotation
+            rotationNode = rotationNode->leftChild;
+            rotationNode->rightChild = rotationNode->parent;
+            rotationNode->parent->leftChild = NULL;
+
+            if (inbalancedNode == inbalancedNode->parent->leftChild)
+            {
+                inbalancedNode->parent->leftChild = rotationNode;
+                rotationNode->parent = newParent;
+            }
+            else
+            {
+                inbalancedNode->parent->rightChild = rotationNode;
+                rotationNode->parent = newParent;
+            }
+            inbalancedNode->parent = rotationNode;
+            rotationNode->leftChild = inbalancedNode;
+            inbalancedNode->rightChild = NULL;
+        }
+        else
+        {
+            if (rotationNode->leftChild)
+            {
+                temp = rotationNode->leftChild;
+                temp->parent = NULL;
+            }
+
+            // left rotation
+            if (inbalancedNode->parent != NULL && inbalancedNode == inbalancedNode->parent->leftChild)
+            {
+                inbalancedNode->parent->leftChild = rotationNode;
+                rotationNode->leftChild = rotationNode->parent;
+                rotationNode->leftChild->parent = rotationNode;
+                rotationNode->parent = newParent;
+            }
+            else if (inbalancedNode->parent != NULL && inbalancedNode == inbalancedNode->parent->rightChild)
+            {
+                inbalancedNode->parent->rightChild = rotationNode;
+                rotationNode->leftChild = rotationNode->parent;
+                rotationNode->leftChild->parent = rotationNode;
+                rotationNode->parent = newParent;
+            }
+            else
+            {
+                rotationNode->leftChild = rotationNode->parent;
+                rotationNode->leftChild->parent = rotationNode;
+                rotationNode->parent = NULL;
+                self->rootNode = rotationNode;
+            }
+            inbalancedNode->parent = rotationNode;
+            inbalancedNode->rightChild = NULL;
+        }
+
+        if (temp != NULL)
+        {
+            addNode(self, temp);
+        }
+    }
 }
 
 void printTree(struct AVLTree *self)
 {
-    struct AVLTreeNode *leftMostNode;
 
     if (self->rootNode)
     {
-
-        struct AVLTreeNode *leftMostNode;
-        leftMostNode = self->rootNode;
-        int height = 0;
-        int width = 0;
-        int maxHeight = 0;
-        int maxWidth = 0;
-
-        struct TreeDimension *treeDimension = getTreeDimension(self->rootNode);
-
-        int **treeMatrix = malloc(sizeof(int *) * treeDimension->height);
-        // init tree matrix
-        for (int i = 0; i < treeDimension->height; i++)
-        {
-            treeMatrix[i] = malloc(sizeof(int *));
-            for (int j = 0; j < (treeDimension->width) * 2; j++)
-            {
-                treeMatrix[i][j] = (int *)malloc(sizeof(int));
-                treeMatrix[i][j] = (int *)NULL;
-            }
-        }
-
-        width = treeDimension->width;
-
-        printTreeRecursively(self->rootNode, &width, &height, treeMatrix);
-
-        for (int i = 0; i < treeDimension->height; i++)
-        {
-            for (int j = 0; j < (treeDimension->width) * 2; j++)
-            {
-                if (treeMatrix[i][j] != NULL)
-                {
-                    printf(" %d ", treeMatrix[i][j]);
-                }
-                else
-                {
-                    printf("    ");
-                }
-            }
-            printf("\n");
-        }
+        printTreeRecursively(self->rootNode);
     }
 }
 
-void printTreeRecursively(struct AVLTreeNode *node, int *width, int *height, int **treeMatrix)
+void printTreeRecursively(struct AVLTreeNode *node)
 {
     if (node->leftChild)
     {
-        *height = *height + 1;
-        *width = *width - 1;
-        printTreeRecursively(node->leftChild, width, height, treeMatrix);
-        *height = *height - 1;
-        *width = *width + 1;
+
+        printTreeRecursively(node->leftChild);
     }
 
     printf("value: %d", node->value);
-    if(node->leftChild) printf(", leftChildValue: %d", node->leftChild->value);
-    if(node->rightChild) printf(", rightChildValue: %d", node->rightChild->value);
-    printf("\n");
-     
-    treeMatrix[*height][*width] = node->value;
-
-    if (node->rightChild)
-    {
-        *width = *width + 1;
-        *height = *height + 1;
-        printTreeRecursively(node->rightChild, width, height, treeMatrix);
-        *height = *height - 1;
-    }
-}
-
-struct TreeDimension *getTreeDimension(struct AVLTreeNode *rootNode)
-{
-
-    int height = 0;
-    int width = 0;
-    int maxHeight = 0;
-    int maxWidth = 0;
-
-    getTreeDimensionRecursively(rootNode, &width, &height, &maxWidth, &maxHeight);
-    struct TreeDimension *treeDimension = (struct TreeDimension *)malloc(sizeof(struct TreeDimension));
-    treeDimension->height = maxHeight++;
-    treeDimension->width = maxWidth++;
-
-    return treeDimension;
-}
-
-void getTreeDimensionRecursively(struct AVLTreeNode *node, int *width, int *height, int *maxWidth, int *maxHeight)
-{
-    if (*maxWidth < *width)
-    {
-        *maxWidth = *width;
-    }
-
-    if (*maxHeight < *height)
-    {
-        *maxHeight = *height;
-    }
-
     if (node->leftChild)
-    {
-        *height = *height + 1;
-        getTreeDimensionRecursively(node->leftChild, width, height, maxWidth, maxHeight);
-    }
+        printf(", leftChildValue: %d", node->leftChild->value);
+    if (node->rightChild)
+        printf(", rightChildValue: %d", node->rightChild->value);
+    printf("\n");
 
     if (node->rightChild)
     {
-        *width = *width + 1;
-        *height = *height + 1;
-        getTreeDimensionRecursively(node->rightChild, width, height, maxWidth, maxHeight);
+        printTreeRecursively(node->rightChild);
     }
 }

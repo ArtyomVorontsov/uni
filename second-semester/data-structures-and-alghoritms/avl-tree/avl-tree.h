@@ -1,3 +1,4 @@
+#include <stdbool.h>
 
 struct AVLTreeNode
 {
@@ -10,11 +11,11 @@ struct AVLTreeNode
 struct AVLTree
 {
     struct AVLTreeNode *rootNode;
-    void (*addNode)(struct AVLTree *self, int value);
+    void (*addNode)(struct AVLTree *self, struct AVLTreeNode *node);
     void (*removeNode)(struct AVLTree *self, int value);
     void (*printTree)(struct AVLTree *self);
-    void (*_checkBalance)(struct AVLTree *self);
-    void (*_balance)(struct AVLTree *self);
+    bool (*_checkBalance)(struct AVLTreeNode *newNode);
+    void (*_balance)(struct AVLTree *self, struct AVLTreeNode *rotationNode);
 };
 
 struct TreeDimension
@@ -24,14 +25,14 @@ struct TreeDimension
 };
 
 struct AVLTree *getAVLTree();
-void addNode(struct AVLTree *self, int value);
+void addNode(struct AVLTree *self, struct AVLTreeNode *newNode);
+struct AVLTreeNode *newNode(int value);
 void removeNode(struct AVLTree *self, int value);
-void _checkBalance(struct AVLTree *self);
-void _balance(struct AVLTree *self);
-
+struct AVLTreeNode *_getInbalancedSubtreeRotationNode(struct AVLTreeNode *newNode);
+void _balance(struct AVLTree *self, struct AVLTreeNode *node);
 void addNodeRecursively(struct AVLTreeNode *newNode, struct AVLTreeNode *avlTreeNode);
 void removeNodeByValueRecursively(int value, struct AVLTreeNode *avlTreeNode);
-void printTreeRecursively(struct AVLTreeNode *node, int *width, int *heigth, int **treeMatrix);
-void getTreeDimensionRecursively(struct AVLTreeNode *node, int *width, int *height, int *maxWidth, int *maxHeight);
 struct TreeDimension *getTreeDimension(struct AVLTreeNode *rootNode);
 void printTree(struct AVLTree *self);
+int _getTreeDepthRecursively(struct AVLTreeNode *node);
+void printTreeRecursively(struct AVLTreeNode *node);
