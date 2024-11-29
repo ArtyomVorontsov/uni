@@ -6,10 +6,10 @@ int main()
 {
     struct SLLNode *node;
 
-    // Get new single linked list
+    // Get new singly linked list
     struct SLL *sll = getSLL();
 
-    // Add single linked list values
+    // Add singly linked list values
     sll->addNode(sll, "7");
     sll->addNode(sll, "6");
     sll->addNode(sll, "12");
@@ -20,7 +20,7 @@ int main()
     // Delete node by value
     sll->deleteNode(sll, "3");
 
-    // Print single linked list
+    // Print singly linked list
     node = sll->firstNode;
     while (node != NULL)
     {
@@ -28,10 +28,10 @@ int main()
         node = node->nextNode;
     }
 
-    // Sort single linked list
+    // Sort singly linked list
     sll->sortList(sll);
 
-    // Print single linked list after sorting
+    // Print singly linked list after sorting
     printf("\n\nQuick sort:\n");
     node = sll->firstNode;
     while (node != NULL)

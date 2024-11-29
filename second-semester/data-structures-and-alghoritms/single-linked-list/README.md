@@ -1,0 +1,4 @@
+My task was to implement a singly linked list structure where each element has a pointer to the next element and a string as it's value. I have used C programming language to implement singly linked list.
+In my program there are 2 main structs SSL and SSL node, SSL struct consists of references on procedures which manipulate singly linked list data structure and also reference on first node of singly linked list.
+Procedures on which SSL struct fields have references are addNode, deleteNode and sortList. AddNode adds node at the end and deleteNode removes node from the list. SortList procedure sort singly linked list in ascending order and utilises quick sort alghoritm with recursive strategy.  
+In main.c available example which uses procedure getSLL to create SSL object, later in a file demonstrated various usages of addNode, deleteNode and sortList.
