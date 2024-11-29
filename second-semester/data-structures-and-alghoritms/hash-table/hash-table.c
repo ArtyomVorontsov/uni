@@ -3,15 +3,6 @@
 #include <stdlib.h>
 #define HASH_TABLE_SIZE 12
 
-// Hash function can be simple, for example: number % 12.
-
-// A-B-C. Implement an operation to add an element.
-// A-B-C. Implement an operation to remove an element by key.
-// Implement collision resolution (choose one):
-// Double Hashing
-// Chaining
-// Quadratic Probing
-
 int hashFucntion(int key)
 {	
 	return key % HASH_TABLE_SIZE;
