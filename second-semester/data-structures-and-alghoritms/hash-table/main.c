@@ -7,6 +7,7 @@ int main()
 {
 	struct HashTable* ht = getHashTable();
 
+	// example
 	ht->addElement(ht, 1, (char *) "hello");
 	ht->addElement(ht, 2, (char*) "world");
 	ht->addElement(ht, 2, (char*)"a?");
@@ -14,6 +15,7 @@ int main()
 	ht->addElement(ht, 12, (char*)"coli");
 	ht->addElement(ht, 24, (char*)"sion");
 	ht->addElement(ht, 0, (char*)"check");
+
 
 
 	// print hash table contents
@@ -26,6 +28,21 @@ int main()
 			lln = lln->nextNode;
 		}
 	}
+
+	ht->deleteElementByKey(ht, 1);
+
+	// print hash table contents after deletion
+	printf("\nRecord 'hello' deleted:\n");
+	for (int i = 0; i < 4; i++)
+	{
+		struct LinkedListNode *lln = ht->elements[i]->firstNode;
+
+		while (lln != NULL) {
+			printf("key: %d, value: %s\n", lln->key, lln->value);
+			lln = lln->nextNode;
+		}
+	}
+
 
 	return 0;
 }
