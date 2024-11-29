@@ -1,6 +1,8 @@
 #include "./sll.h"
 #include <stdlib.h>
 #include <string.h>
+#include "./utils.h"
+#include <stdio.h>
 
 void deleteNode(struct SLL *self, char *value)
 {
@@ -10,7 +12,14 @@ void deleteNode(struct SLL *self, char *value)
     {
         if (strcmp(node->value, value) == 0)
         {
-            prevNode->nextNode = node->nextNode;
+            if (prevNode == NULL)
+            {
+                self->firstNode = node->nextNode;
+            }
+            else
+            {
+                prevNode->nextNode = node->nextNode;
+            }
             free(node);
             break;
         }
@@ -26,6 +35,7 @@ void addNode(struct SLL *self, char *value)
 
     newNode->value = value;
     newNode->nextNode = NULL;
+    printf("%d\n", sumString(value));
 
     if (self->firstNode == NULL)
     {
@@ -72,9 +82,17 @@ struct SLLNode *quickSort(struct SLLNode *firstNode)
     {
         node = firstNode;
         struct SLLNode *tempNode = node->nextNode;
-        tempNode->nextNode = node;
-        node->nextNode = NULL;
-        return tempNode;
+        if (sumString(node->value) > sumString(tempNode->value))
+        {
+            tempNode->nextNode = node;
+            node->nextNode = NULL;
+            return tempNode;
+        }
+        else
+        {
+            tempNode->nextNode = NULL;
+            return node;
+        }
     }
 
     if (listLength <= 1)
@@ -99,7 +117,7 @@ struct SLLNode *quickSort(struct SLLNode *firstNode)
     while (node)
     {
         nextNode = node->nextNode;
-        if (atoi(node->value) < atoi(middleNode->value))
+        if (sumString(node->value) < sumString(middleNode->value))
         {
             if (nodeLessThanMiddlePtr)
             {
@@ -107,13 +125,12 @@ struct SLLNode *quickSort(struct SLLNode *firstNode)
             }
             else
             {
-                nodeLessThanMiddlePtr = node;
                 nodeLessThanMiddle = node;
             }
             nodeLessThanMiddlePtr = node;
             node->nextNode = NULL;
         }
-        else if (atoi(node->value) > atoi(middleNode->value))
+        else if (sumString(node->value) > sumString(middleNode->value))
         {
             if (nodeGreaterThanMiddlePtr)
             {
@@ -121,7 +138,6 @@ struct SLLNode *quickSort(struct SLLNode *firstNode)
             }
             else
             {
-                nodeGreaterThanMiddlePtr = node;
                 nodeGreaterThanMiddle = node;
             }
             nodeGreaterThanMiddlePtr = node;
@@ -135,18 +151,26 @@ struct SLLNode *quickSort(struct SLLNode *firstNode)
     nodeLessThanMiddle = quickSort(nodeLessThanMiddle);
     nodeGreaterThanMiddle = quickSort(nodeGreaterThanMiddle);
 
-    // move to last node in the list
-    nodeLessThanMiddlePtr = nodeLessThanMiddle;
-    while (nodeLessThanMiddlePtr->nextNode)
+    if (nodeLessThanMiddle)
     {
-        nodeLessThanMiddlePtr = nodeLessThanMiddlePtr->nextNode;
+        // move to last node in the list
+        nodeLessThanMiddlePtr = nodeLessThanMiddle;
+        while (nodeLessThanMiddlePtr->nextNode)
+        {
+            nodeLessThanMiddlePtr = nodeLessThanMiddlePtr->nextNode;
+        }
+
+        nodeLessThanMiddlePtr->nextNode = middleNode;
+
+        middleNode->nextNode = nodeGreaterThanMiddle;
+
+        return nodeLessThanMiddle;
     }
-
-    nodeLessThanMiddlePtr->nextNode = middleNode;
-
-    middleNode->nextNode = nodeGreaterThanMiddle;
-
-    return nodeLessThanMiddle;
+    else
+    {
+        middleNode->nextNode = nodeGreaterThanMiddle;
+        return middleNode;
+    }
 }
 
 struct SLL *getSLL()
