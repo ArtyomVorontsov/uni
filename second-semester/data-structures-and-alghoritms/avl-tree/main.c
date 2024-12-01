@@ -1,8 +1,8 @@
 #include "./avl-tree.h"
+#include <stdio.h>
 
 int main()
 {
-
     struct AVLTree *avlTree = getAVLTree();
     avlTree->addNode(avlTree, newNode(11));
     avlTree->addNode(avlTree, newNode(10));
@@ -20,6 +20,23 @@ int main()
     avlTree->addNode(avlTree, newNode(10000));
 
     avlTree->printTree(avlTree);
+    printf("\n");
+
+    avlTree->removeNode(avlTree, 18);
+    avlTree->printTree(avlTree);
+    printf("\n");
+
+    avlTree->removeNode(avlTree, 26);
+    avlTree->printTree(avlTree);
+    printf("\n");
+
+    avlTree->removeNode(avlTree, 20);
+    avlTree->printTree(avlTree);
+    printf("\n");
+
+    avlTree->removeNode(avlTree, 10000);
+    avlTree->printTree(avlTree);
+    printf("\n");
 
     return 0;
 }

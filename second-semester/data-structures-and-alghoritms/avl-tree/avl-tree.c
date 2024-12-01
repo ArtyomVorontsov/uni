@@ -10,6 +10,7 @@ struct AVLTree *getAVLTree()
     avlTree->addNode = addNode;
     avlTree->removeNode = removeNode;
     avlTree->_balance = _balance;
+    avlTree->_getInbalancedSubtreeRotationNode = _getInbalancedSubtreeRotationNode;
     avlTree->printTree = printTree;
 
     return avlTree;
@@ -37,7 +38,7 @@ void addNode(struct AVLTree *self, struct AVLTreeNode *newNode)
     }
 
     struct AVLTreeNode *inbalancedNode = NULL;
-    if (((inbalancedNode = _getInbalancedSubtreeRotationNode(newNode)) != NULL) && newNode->parent)
+    if (((inbalancedNode = self->_getInbalancedSubtreeRotationNode(newNode)) != NULL) && newNode->parent)
     {
         _balance(self, inbalancedNode);
     }
@@ -76,18 +77,24 @@ void addNodeRecursively(struct AVLTreeNode *newNode, struct AVLTreeNode *avlTree
 
 void removeNode(struct AVLTree *self, int value)
 {
-    removeNodeByValueRecursively(value, self->rootNode);
+    removeNodeByValueRecursively(self, value, self->rootNode);
+
+    struct AVLTreeNode *inbalancedNode = NULL;
+    if (((inbalancedNode = self->_getInbalancedSubtreeRotationNode(self->rootNode)) != NULL) && self->rootNode->parent)
+    {
+        _balance(self, inbalancedNode);
+    }
 }
 
-void removeNodeByValueRecursively(int value, struct AVLTreeNode *avlTreeNode)
+void removeNodeByValueRecursively(struct AVLTree *self, int value, struct AVLTreeNode *avlTreeNode)
 {
     if (value > avlTreeNode->value)
     {
-        removeNodeByValueRecursively(value, avlTreeNode->rightChild);
+        removeNodeByValueRecursively(self, value, avlTreeNode->rightChild);
     }
     else if (value < avlTreeNode->value)
     {
-        removeNodeByValueRecursively(value, avlTreeNode->leftChild);
+        removeNodeByValueRecursively(self, value, avlTreeNode->leftChild);
     }
     else if (value == avlTreeNode->value)
     {
@@ -95,16 +102,42 @@ void removeNodeByValueRecursively(int value, struct AVLTreeNode *avlTreeNode)
         struct AVLTreeNode *rightChild = avlTreeNode->rightChild;
         struct AVLTreeNode *parent = avlTreeNode->parent;
 
-        if (parent->leftChild->value == value)
+        if (parent)
         {
-            free(parent->leftChild);
-            parent->leftChild = NULL;
-        }
+            if (parent->leftChild->value == value)
+            {
+                free(parent->leftChild);
+                parent->leftChild = NULL;
+            }
 
-        if (parent->rightChild->value == value)
+            if (parent->rightChild->value == value)
+            {
+                free(parent->rightChild);
+                parent->rightChild = NULL;
+            }
+        }
+        else
         {
-            free(parent->rightChild);
-            parent->rightChild = NULL;
+            struct AVLTreeNode *n = avlTreeNode->leftChild != NULL ? avlTreeNode->leftChild : avlTreeNode->rightChild;
+            while (n->rightChild != NULL)
+            {
+                n = n->rightChild;
+            }
+
+            parent = n;
+            n->parent->rightChild = NULL;
+            n->parent = NULL;
+
+            if (rightChild == n)
+            {
+                rightChild = NULL;
+            }
+
+            if (leftChild == n)
+            {
+                leftChild = NULL;
+            }
+            self->rootNode = parent;
         }
 
         if (rightChild)
@@ -121,22 +154,23 @@ void removeNodeByValueRecursively(int value, struct AVLTreeNode *avlTreeNode)
 
 struct AVLTreeNode *_getInbalancedSubtreeRotationNode(struct AVLTreeNode *newNode)
 {
-    int maxHeightLeftSubtree = 0;
-    int maxHeightRightSubtree = 0;
+
+    int maxDepthLeftSubtree = 0;
+    int maxDepthRightSubtree = 0;
     bool isBallanced = true;
 
     struct AVLTreeNode *node = newNode;
 
     while (node && isBallanced)
     {
-        maxHeightLeftSubtree = _getTreeDepthRecursively(node->leftChild);
-        maxHeightRightSubtree = _getTreeDepthRecursively(node->rightChild);
+        maxDepthLeftSubtree = _getTreeDepthRecursively(node->leftChild);
+        maxDepthRightSubtree = _getTreeDepthRecursively(node->rightChild);
 
-        isBallanced = abs(maxHeightLeftSubtree - maxHeightRightSubtree) <= 1;
+        isBallanced = abs(maxDepthLeftSubtree - maxDepthRightSubtree) <= 1;
 
         if (isBallanced == false)
         {
-            if (maxHeightLeftSubtree - maxHeightRightSubtree > 0)
+            if (maxDepthLeftSubtree - maxDepthRightSubtree > 0)
             {
                 node = node->leftChild;
             }
@@ -147,8 +181,8 @@ struct AVLTreeNode *_getInbalancedSubtreeRotationNode(struct AVLTreeNode *newNod
             break;
         }
 
-        maxHeightLeftSubtree = 0;
-        maxHeightRightSubtree = 0;
+        maxDepthLeftSubtree = 0;
+        maxDepthRightSubtree = 0;
 
         node = node->parent;
     }
