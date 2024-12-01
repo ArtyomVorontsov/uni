@@ -14,14 +14,8 @@ struct AVLTree
     void (*addNode)(struct AVLTree *self, struct AVLTreeNode *node);
     void (*removeNode)(struct AVLTree *self, int value);
     void (*printTree)(struct AVLTree *self);
-    bool (*_checkBalance)(struct AVLTreeNode *newNode);
+    struct AVLTreeNode *(*_getInbalancedSubtreeRotationNode)(struct AVLTreeNode *newNode);
     void (*_balance)(struct AVLTree *self, struct AVLTreeNode *rotationNode);
-};
-
-struct TreeDimension
-{
-    int width;
-    int height;
 };
 
 struct AVLTree *getAVLTree();
@@ -31,8 +25,7 @@ void removeNode(struct AVLTree *self, int value);
 struct AVLTreeNode *_getInbalancedSubtreeRotationNode(struct AVLTreeNode *newNode);
 void _balance(struct AVLTree *self, struct AVLTreeNode *node);
 void addNodeRecursively(struct AVLTreeNode *newNode, struct AVLTreeNode *avlTreeNode);
-void removeNodeByValueRecursively(int value, struct AVLTreeNode *avlTreeNode);
-struct TreeDimension *getTreeDimension(struct AVLTreeNode *rootNode);
+void removeNodeByValueRecursively(struct AVLTree *self, int value, struct AVLTreeNode *avlTreeNode);
 void printTree(struct AVLTree *self);
 int _getTreeDepthRecursively(struct AVLTreeNode *node);
 void printTreeRecursively(struct AVLTreeNode *node);
