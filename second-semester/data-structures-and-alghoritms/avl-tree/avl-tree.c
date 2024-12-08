@@ -9,7 +9,7 @@ struct AVLTree *getAVLTree()
     avlTree->rootNode = NULL;
     avlTree->addNode = addNode;
     avlTree->removeNode = removeNode;
-    avlTree->_balance = _balance;
+    avlTree->balance = balance;
     avlTree->_getInbalancedSubtreeRotationNode = _getInbalancedSubtreeRotationNode;
     avlTree->printTree = printTree;
 
@@ -40,7 +40,7 @@ void addNode(struct AVLTree *self, struct AVLTreeNode *newNode)
     struct AVLTreeNode *inbalancedNode = NULL;
     if (((inbalancedNode = self->_getInbalancedSubtreeRotationNode(newNode)) != NULL) && newNode->parent)
     {
-        _balance(self, inbalancedNode);
+        _rotateTree(self, inbalancedNode);
     }
 }
 
@@ -79,11 +79,7 @@ void removeNode(struct AVLTree *self, int value)
 {
     removeNodeByValueRecursively(self, value, self->rootNode);
 
-    struct AVLTreeNode *inbalancedNode = NULL;
-    if (((inbalancedNode = self->_getInbalancedSubtreeRotationNode(self->rootNode)) != NULL) && self->rootNode->parent)
-    {
-        _balance(self, inbalancedNode);
-    }
+    balance(self, self->rootNode);
 }
 
 void removeNodeByValueRecursively(struct AVLTree *self, int value, struct AVLTreeNode *avlTreeNode)
@@ -204,7 +200,22 @@ int _getTreeDepthRecursively(struct AVLTreeNode *node)
     return (heightLeft > heightRight ? heightLeft : heightRight) + 1;
 }
 
-void _balance(struct AVLTree *self, struct AVLTreeNode *rotationNode)
+void balance(struct AVLTree *self, struct AVLTreeNode *node)
+{
+    if (node == NULL)
+        return;
+
+    struct AVLTreeNode *inbalancedNode = NULL;
+    if (((inbalancedNode = self->_getInbalancedSubtreeRotationNode(node)) != NULL) && node->parent)
+    {
+        _rotateTree(self, inbalancedNode);
+    }
+
+    balance(self, node->leftChild);
+    balance(self, node->rightChild);
+}
+
+void _rotateTree(struct AVLTree *self, struct AVLTreeNode *rotationNode)
 {
     struct AVLTreeNode *inbalancedNode = rotationNode->parent;
     struct AVLTreeNode *newParent = inbalancedNode->parent;
@@ -351,6 +362,7 @@ void _balance(struct AVLTree *self, struct AVLTreeNode *rotationNode)
 void printTree(struct AVLTree *self)
 {
 
+    printf("Root node value: %d\n", self->rootNode->value);
     if (self->rootNode)
     {
         printTreeRecursively(self->rootNode);
@@ -359,18 +371,17 @@ void printTree(struct AVLTree *self)
 
 void printTreeRecursively(struct AVLTreeNode *node)
 {
-    if (node->leftChild)
-    {
-
-        printTreeRecursively(node->leftChild);
-    }
-
     printf("value: %d", node->value);
     if (node->leftChild)
         printf(", leftChildValue: %d", node->leftChild->value);
     if (node->rightChild)
         printf(", rightChildValue: %d", node->rightChild->value);
     printf("\n");
+
+    if (node->leftChild)
+    {
+        printTreeRecursively(node->leftChild);
+    }
 
     if (node->rightChild)
     {

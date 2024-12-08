@@ -15,7 +15,7 @@ struct AVLTree
     void (*removeNode)(struct AVLTree *self, int value);
     void (*printTree)(struct AVLTree *self);
     struct AVLTreeNode *(*_getInbalancedSubtreeRotationNode)(struct AVLTreeNode *newNode);
-    void (*_balance)(struct AVLTree *self, struct AVLTreeNode *rotationNode);
+    void (*balance)(struct AVLTree *self, struct AVLTreeNode *node);
 };
 
 struct AVLTree *getAVLTree();
@@ -23,7 +23,8 @@ void addNode(struct AVLTree *self, struct AVLTreeNode *newNode);
 struct AVLTreeNode *newNode(int value);
 void removeNode(struct AVLTree *self, int value);
 struct AVLTreeNode *_getInbalancedSubtreeRotationNode(struct AVLTreeNode *newNode);
-void _balance(struct AVLTree *self, struct AVLTreeNode *node);
+void _rotateTree(struct AVLTree *self, struct AVLTreeNode *node);
+void balance(struct AVLTree *self, struct AVLTreeNode *node);
 void addNodeRecursively(struct AVLTreeNode *newNode, struct AVLTreeNode *avlTreeNode);
 void removeNodeByValueRecursively(struct AVLTree *self, int value, struct AVLTreeNode *avlTreeNode);
 void printTree(struct AVLTree *self);
