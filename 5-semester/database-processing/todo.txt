@@ -1,0 +1,27 @@
+TODO: 
+
+1. Database Schema (DDL Script)
+* DONE - Create tables for managing events, ticket types, customer orders, order lines, and an audit log.
+* DONE - Define appropriate primary keys, foreign keys, data types, and constraints.
+* DONE - Ensure referential integrity between related entities (e.g., orders linked to events and ticket types).
+* Use meaningful column names and comments to describe the purpose of each table.
+
+2. Sample Data (DML Script)
+* Insert at least two events, each with multiple ticket types and defined capacities.
+* Insert at least three orders with various ticket line items that represent valid and boundary cases (e.g., near-capacity, insufficient capacity).
+* Include data that can be used to test both valid and invalid operations triggered by your business rules.
+
+
+3. Trigger Logic (PL/SQL Script)
+* Implement AUDIT_LOG Logging significant changes (insert, update, delete) into an audit table.
+* Implement database triggers to maintain consistency and enforce business rules such as:
+    * Preventing the sale of tickets that exceed the available capacity.
+    * Automatically calculating totals for order lines and overall order amounts.
+    * Logging significant changes (insert, update, delete) into an audit table.
+* Triggers must operate correctly on multi-row operations.
+* Include clear comments explaining the purpose, timing, and scope of each trigger.
+* Do not use commits or autonomous transactions inside triggers.
+
+4. Audit Logging
+* Design a general-purpose audit table to record who made a change, when it occurred, which table was affected, and the action performed.
+* All triggers must insert relevant details into this audit table when DML occurs on key entities.

@@ -1,0 +1,8 @@
+CREATE OR REPLACE TRIGGER trg_events_set_updated_at 
+BEFORE UPDATE ON EVENTS 
+FOR EACH ROW 
+DECLARE 
+BEGIN 
+    :NEW.updated_at := SYSTIMESTAMP;
+END;
+/
