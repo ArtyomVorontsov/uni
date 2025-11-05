@@ -9,15 +9,15 @@ TODO:
 2. Sample Data (DML Script)
 * DONE - Insert at least two events, each with multiple ticket types and defined capacities.
 * DONE - Insert at least three orders with various ticket line items that represent valid and boundary cases (e.g., near-capacity, insufficient capacity).
-* Include data that can be used to test both valid and invalid operations triggered by your business rules.
+* DONE - Include data that can be used to test both valid and invalid operations triggered by your business rules.
 
 
 3. Trigger Logic (PL/SQL Script)
 * DONE - Implement AUDIT_LOG Logging significant changes (insert, update, delete) into an audit table.
 * Implement database triggers to maintain consistency and enforce business rules such as:
-    * Preventing the sale of tickets that exceed the available capacity.
-    * Automatically calculating totals for order lines and overall order amounts.
-    * Logging significant changes (insert, update, delete) into an audit table.
+    * DONE - Preventing the sale of tickets that exceed the available capacity.
+    * DONE - Automatically calculating totals for order lines and overall order amounts.
+    * DONE - Logging significant changes (insert, update, delete) into an audit table.
 * Triggers must operate correctly on multi-row operations.
 * Include clear comments explaining the purpose, timing, and scope of each trigger.
 * Do not use commits or autonomous transactions inside triggers.
@@ -25,3 +25,5 @@ TODO:
 4. Audit Logging
 * DONE - Design a general-purpose audit table to record who made a change, when it occurred, which table was affected, and the action performed.
 * DONE - All triggers must insert relevant details into this audit table when DML occurs on key entities.
+
+* Test all triggers
