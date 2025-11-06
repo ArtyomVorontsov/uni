@@ -18,9 +18,9 @@ TODO:
     * DONE - Preventing the sale of tickets that exceed the available capacity.
     * DONE - Automatically calculating totals for order lines and overall order amounts.
     * DONE - Logging significant changes (insert, update, delete) into an audit table.
-* Triggers must operate correctly on multi-row operations.
-* Include clear comments explaining the purpose, timing, and scope of each trigger.
-* Do not use commits or autonomous transactions inside triggers.
+* DONE - Triggers must operate correctly on multi-row operations.
+* DONE - Include clear comments explaining the purpose, timing, and scope of each trigger.
+* DONE - Do not use commits or autonomous transactions inside triggers.
 
 4. Audit Logging
 * DONE - Design a general-purpose audit table to record who made a change, when it occurred, which table was affected, and the action performed.
