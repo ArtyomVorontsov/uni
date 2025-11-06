@@ -31,6 +31,7 @@ CREATE TABLE PRODUCTS (
     category_id NUMBER,
     -- optional FK to CATEGORIES if created later
     warehouse_id NUMBER NOT NULL,
+    stock_quantity NUMBER,
     cost NUMBER(10, 2),
     weight NUMBER(10, 2),
     CONSTRAINT fk_products_warehouse_id FOREIGN KEY (warehouse_id) REFERENCES WAREHOUSES(id)
