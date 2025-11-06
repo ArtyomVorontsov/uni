@@ -1,8 +1,3 @@
-
--- ===============================================
--- INSERT SAMPLE DATA
--- ===============================================
-
 -- --- Events ---
 INSERT INTO EVENTS (max_visitors_count, title, start_date, end_date)
 VALUES (100, 'Tech Conference 2025', TIMESTAMP '2025-05-01 10:00:00', TIMESTAMP '2025-05-01 20:00:00');
@@ -32,8 +27,8 @@ INSERT INTO CUSTOMERS (first_name, last_name) VALUES ('Peter', 'Lee');
 
 -- --- Orders ---
 -- Order 1: Valid, normal purchase
-INSERT INTO ORDERS (customer_id, items_amount, total_price)
-VALUES (1, 3, 220.00);
+INSERT INTO ORDERS (customer_id)
+VALUES (1);
 
 INSERT INTO ORDER_LINES (event_id, ticket_type_id, order_id)
 VALUES (1, 1, 1); -- Standard
@@ -42,12 +37,12 @@ VALUES (1, 2, 1); -- VIP
 INSERT INTO ORDER_LINES (event_id, ticket_type_id, order_id)
 VALUES (1, 1, 1); -- Standard
 
--- Order 2: Boundary, near-capacity (70 Standard tickets for Event 1)
-INSERT INTO ORDERS (customer_id, items_amount, total_price)
-VALUES (2, 70, 3500.00);
+-- Order 2: Boundary, near-capacity (68 Standard tickets for Event 1)
+INSERT INTO ORDERS (customer_id)
+VALUES (2);
 
 BEGIN
-  FOR i IN 1..70 LOOP
+  FOR i IN 1..68 LOOP
     INSERT INTO ORDER_LINES (event_id, ticket_type_id, order_id)
     VALUES (1, 1, 2);
   END LOOP;
@@ -55,13 +50,9 @@ END;
 /
 
 -- Order 3: Invalid (exceeds capacity, should trigger business rule)
-INSERT INTO ORDERS (customer_id, items_amount, total_price)
-VALUES (3, 1, 50.00);
+INSERT INTO ORDERS (customer_id)
+VALUES (3);
 
 INSERT INTO ORDER_LINES (event_id, ticket_type_id, order_id)
 VALUES (1, 1, 3); -- This exceeds Standard max_amount (70)
 -- Expected: Should fail if trigger/validation applied
-
--- ===============================================
--- End of Script
--- ===============================================

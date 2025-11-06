@@ -72,7 +72,7 @@ BEGIN
 END;
 /
 
-CREATE OR REPLACE TRIGGER trg_events_set_updated_at 
+CREATE OR REPLACE TRIGGER trg_ticket_types_set_updated_at 
 BEFORE UPDATE ON TICKET_TYPES 
 FOR EACH ROW 
 DECLARE 
@@ -81,7 +81,7 @@ BEGIN
 END;
 /
 
-CREATE OR REPLACE TRIGGER trg_events_set_updated_at 
+CREATE OR REPLACE TRIGGER trg_customers_set_updated_at 
 BEFORE UPDATE ON CUSTOMERS 
 FOR EACH ROW 
 DECLARE 
@@ -90,7 +90,7 @@ BEGIN
 END;
 /
 
-CREATE OR REPLACE TRIGGER trg_events_set_updated_at 
+CREATE OR REPLACE TRIGGER trg_orders_set_updated_at 
 BEFORE UPDATE ON ORDERS 
 FOR EACH ROW 
 DECLARE 
@@ -99,7 +99,7 @@ BEGIN
 END;
 /
 
-CREATE OR REPLACE TRIGGER trg_events_set_updated_at 
+CREATE OR REPLACE TRIGGER trg_order_lines_set_updated_at 
 BEFORE UPDATE ON ORDER_LINES 
 FOR EACH ROW 
 DECLARE 
@@ -108,7 +108,7 @@ BEGIN
 END;
 /
 
-CREATE OR REPLACE TRIGGER trg_events_set_updated_at 
+CREATE OR REPLACE TRIGGER trg_audit_log_set_updated_at 
 BEFORE UPDATE ON AUDIT_LOG 
 FOR EACH ROW 
 DECLARE 

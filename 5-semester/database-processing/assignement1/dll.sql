@@ -47,8 +47,8 @@ CREATE TABLE CUSTOMERS (
 CREATE TABLE ORDERS (
     id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     customer_id NUMBER NOT NULL,
-    items_amount NUMBER NOT NULL,
-    total_price NUMBER NOT NULL,
+    items_amount NUMBER,
+    total_price NUMBER,
     updated_at TIMESTAMP DEFAULT systimestamp NOT NULL,
     created_at TIMESTAMP DEFAULT systimestamp NOT NULL,
     CONSTRAINT fk_orders_customer_id FOREIGN KEY (customer_id) REFERENCES CUSTOMERS(id)
