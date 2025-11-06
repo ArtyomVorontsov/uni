@@ -57,6 +57,7 @@ CREATE TABLE SHIPMENTS (
     delivery_responsible_driver_id NUMBER NOT NULL,
     delivery_status VARCHAR2(50) DEFAULT 'Pending',
     shipment_date DATE DEFAULT SYSDATE,
+    distance NUMBER,
     CONSTRAINT fk_shipments_driver FOREIGN KEY (delivery_responsible_driver_id) REFERENCES DRIVERS(id)
 );
 

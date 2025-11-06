@@ -75,39 +75,45 @@ INSERT INTO
     SHIPMENTS (
         delivery_responsible_driver_id,
         delivery_status,
-        shipment_date
+        shipment_date,
+        distance
     )
 VALUES
     (
         1,
         'Delivered',
-        TO_DATE('2025-11-01', 'YYYY-MM-DD')
+        TO_DATE('2025-11-01', 'YYYY-MM-DD'),
+        2000
     );
 
 INSERT INTO
     SHIPMENTS (
         delivery_responsible_driver_id,
         delivery_status,
-        shipment_date
+        shipment_date,
+        distance
     )
 VALUES
     (
         2,
         'Pending',
-        TO_DATE('2025-11-06', 'YYYY-MM-DD')
+        TO_DATE('2025-11-06', 'YYYY-MM-DD'),
+        1000
     );
 
 INSERT INTO
     SHIPMENTS (
         delivery_responsible_driver_id,
         delivery_status,
-        shipment_date
+        shipment_date,
+        distance
     )
 VALUES
     (
         3,
         'Delivered',
-        TO_DATE('2025-10-28', 'YYYY-MM-DD')
+        TO_DATE('2025-10-28', 'YYYY-MM-DD'),
+        3000
     );
 
 -- =========================================
@@ -161,13 +167,15 @@ INSERT INTO
     SHIPMENTS (
         delivery_responsible_driver_id,
         delivery_status,
-        shipment_date
+        shipment_date,
+        distance
     )
 VALUES
     (
         1,
         'Pending',
-        TO_DATE('2025-11-06', 'YYYY-MM-DD')
+        TO_DATE('2025-11-06', 'YYYY-MM-DD'),
+        500
     );
 
 INSERT INTO
