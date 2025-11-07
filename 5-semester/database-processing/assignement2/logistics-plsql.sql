@@ -8,8 +8,6 @@
 --     Include exception handling that prints meaningful messages using DBMS_OUTPUT.
 --     Each procedure or function must contain clear comments explaining its purpose and logic.
 --     The code must not contain commits or rollbacks inside the subprograms.
--- PROCEDURE - Registering a new shipment, validating product availability, and reducing warehouse stock.
--- PROCEDURE - Updating delivery status once a shipment is completed.
 ------------------------------------------------------------------------
 -- FUNCTION: calculate_total_shipment_cost
 -- PURPOSE: Calculates the total delivery cost for a specific shipment.
@@ -252,6 +250,50 @@ BEGIN register_new_shipment(
     v_delivery_responsible_driver_id = > 1,
     v_product_id = > 1,
     v_quantity = > 5
+);
+
+END;
+
+/ -- ============================================================
+-- PROCEDURE: complete_shipment
+-- PURPOSE: Updates a shipment's delivery status to 'Delivered'
+--          when the shipment is completed, assigns a delivery score,
+--          and updates the shipment date to the current system date.
+-- PARAMETERS:
+--   v_shipment_id     - ID of the shipment to be marked as delivered
+--   v_delivery_score  - Delivery quality score given for the shipment
+-- ============================================================
+CREATE
+OR REPLACE PROCEDURE complete_shipment (
+    v_shipment_id IN NUMBER,
+    -- Input: shipment ID to update
+    v_delivery_score IN NUMBER -- Input: delivery performance score
+) AS BEGIN -- Update the SHIPMENTS table to mark shipment as delivered
+UPDATE
+    SHIPMENTS
+SET
+    delivery_status = 'Delivered',
+    -- Set status to 'Delivered'
+    delivery_score = v_delivery_score,
+    -- Record provided delivery score
+    shipment_date = SYSDATE -- Update shipment date to current date/time
+WHERE
+    id = v_shipment_id;
+
+-- Match the target shipment by ID
+-- Display confirmation message in output console
+DBMS_OUTPUT.PUT_LINE('Shipment marked as delivered.');
+
+END;
+
+/ -- ============================================================
+-- TEST BLOCK
+-- Description: Executes the procedure with example values.
+-- ============================================================
+BEGIN complete_shipment(
+    v_shipment_id = > 21,
+    -- Example shipment ID
+    v_delivery_score = > 8 -- Example delivery score (out of 10)
 );
 
 END;
