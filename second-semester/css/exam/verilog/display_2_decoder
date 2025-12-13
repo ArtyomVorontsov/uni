@@ -1,0 +1,26 @@
+module display_2_decoder (
+  input x1,
+  input x2,
+  input x3,
+  output M,
+  output TL,
+  output T,
+  output TR,
+  output BL,
+  output B,
+  output BR,
+  output D
+);
+
+  assign M = (x1 & x2 & x3);
+  assign TL = 0;
+  assign T = (x1 & x2 & x3);
+  assign TR = (x1 & x2 & x3);
+  assign BL = 0;
+  assign B = (x1 & x2 & x3);
+  assign BR = (x1 & x2 & x3);
+  assign D = 0;
+
+endmodule
+
+
