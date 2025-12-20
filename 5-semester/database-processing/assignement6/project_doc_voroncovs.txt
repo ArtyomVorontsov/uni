@@ -1,0 +1,207 @@
+ Technical & user documentation.
+
+ # Technical & User Documentation
+
+## 1. Introduction
+
+### 1.1 Scenario Description
+
+This project models a **subscription-based video streaming platform** called **StreamNova**. StreamNova offers digital video content to individual users under recurring monthly subscription plans. Users can subscribe to different plans with varying prices and features, upgrade or downgrade their plans, cancel and later reactivate subscriptions, and consume content through streaming sessions.
+
+The system is designed to support business analysis of revenue, customer engagement, and subscription lifecycle behavior using an Oracle database.
+
+### 1.2 Report Purpose
+
+The **Monthly Performance & Engagement Report** provides management with a consolidated monthly view of:
+
+* Revenue and discounts
+* Active subscriber base
+* Plan performance
+* User engagement
+* Churn, retention, and subscriber movement
+* Potential data quality issues
+
+The report is generated directly in Oracle using a PL/SQL script and printed via `DBMS_OUTPUT`.
+
+---
+
+## 2. Business Requirements Summary
+
+### 2.1 Key Business Questions
+
+The report answers the following core questions:
+
+**Revenue & Subscription Base**
+
+* How much net revenue was generated in the selected month?
+* How much discount was applied?
+* How many paid subscriptions were billed?
+* How many active subscribers exist per plan?
+
+**Engagement / Usage**
+
+* How much total streaming time occurred in the month?
+* What is the average usage per active user?
+* Who are the top users by engagement?
+* Which device types are most used?
+
+**Churn & Customer Movement**
+
+* How many users churned, joined, or reactivated in the month?
+* What is the churn and retention rate?
+
+**Data Quality**
+
+* Are there invalid or suspicious payments?
+* Are there subscriptions or usage records with inconsistent dates or values?
+
+### 2.2 Key KPIs (Summary)
+
+| KPI                 | Description                                             |
+| ------------------- | ------------------------------------------------------- |
+| Monthly Net Revenue | Payments minus discounts for the report month           |
+| Total Discounts     | Sum of all discounts applied                            |
+| ARPU                | Net revenue / active subscribers                        |
+| Active Subscribers  | Users with an active subscription during the month      |
+| Churn Rate          | Churned subscribers / active subscribers at month start |
+| Retention Rate      | 1 − churn rate                                          |
+| Total Usage Time    | Sum of streaming minutes                                |
+| Avg Usage per User  | Total usage / active users                              |
+| Trial Conversions   | Trials converted to paid plans                          |
+| Data Quality Issues | Count of detected bad data records                      |
+
+---
+
+## 3. Data Model Overview
+
+### 3.1 Tables and Relationships
+
+| Table               | Purpose                                      |
+| ------------------- | -------------------------------------------- |
+| USERS               | Subscriber master data (region, signup date) |
+| PLANS               | Subscription plans and prices                |
+| SUBSCRIPTIONS       | Subscription lifecycle periods               |
+| SUBSCRIPTION_EVENTS | Plan changes and status changes              |
+| PAYMENTS            | Billing and discounts                        |
+| STREAM_SESSIONS     | User engagement / usage events               |
+
+**Main Relationships:**
+
+* USERS → SUBSCRIPTIONS (1:N)
+* PLANS → SUBSCRIPTIONS (1:N)
+* SUBSCRIPTIONS → PAYMENTS (1:N)
+* USERS → STREAM_SESSIONS (1:N)
+
+### 3.2 Design Rationale
+
+The schema is intentionally compact (6 tables) and denormalized only where helpful for reporting. Each table directly supports one or more KPIs. Historical accuracy is preserved by modeling subscription periods and events separately.
+
+---
+
+## 4. Technical Design
+
+### 4.1 Report Structure
+
+The PL/SQL report is divided into the following sections:
+
+1. Header Information
+2. Revenue & Subscription Summary
+3. Plan Performance
+4. Engagement / Usage Metrics
+5. Churn & Retention
+6. Segment / Regional Breakdown
+7. Data Quality Checks
+
+Each section uses SQL aggregation queries executed inside PL/SQL blocks and prints results using `DBMS_OUTPUT.PUT_LINE`.
+
+### 4.2 Key Business Rules (Implementation)
+
+**Active Subscriber Definition**
+A subscriber is considered active if:
+
+* `subscription.start_date <= last_day(report_month)`
+* `subscription.end_date IS NULL OR subscription.end_date >= report_month`
+* Status = 'ACTIVE'
+
+**New Subscribers**
+Subscriptions whose `start_date` falls within the report month.
+
+**Churned Subscribers**
+Subscriptions with `end_date` in the report month and status = 'CANCELLED'.
+
+**Reactivated Subscribers**
+Users with a CANCELLED subscription before the month and a new ACTIVE subscription starting in the month.
+
+**Revenue Inclusion Rule**
+Payments are included if `payment_date` falls inside the report month.
+
+**Churn Formula**
+
+```
+Churn Rate = Churned Subscribers / Active Subscribers at Start of Month
+Retention Rate = 1 − Churn Rate
+```
+
+### 4.3 Regional Breakdown
+
+If `p_region_filter = 'ALL'`, the report prints metrics per region. If a specific region is provided, all metrics are filtered and a message indicates the active filter.
+
+### 4.4 Assumptions & Simplifications
+
+* One currency is assumed.
+* Taxes are ignored.
+* Subscription overlap edge cases are not handled.
+* Usage duration is trusted unless explicitly invalid.
+
+---
+
+## 5. How to Run the Project
+
+### 5.1 Execution Order
+
+1. Run **DDL script**
+
+   ```sql
+   @project_ddl_vorontsov.sql
+   ```
+
+2. Run **DML script**
+
+   ```sql
+   @project_dml_vorontsov.sql
+   ```
+
+3. Run **Report script**
+
+   ```sql
+   SET SERVEROUTPUT ON SIZE UNLIMITED;
+   @project_report_vorontsov.sql
+   ```
+
+### 5.2 Parameters
+
+* Modify `p_report_month` to change the analyzed month.
+* Modify `p_region_filter` to filter by region or use 'ALL'.
+
+---
+
+## 6. Limitations & Ideas for Improvement
+
+### Current Limitations
+
+* No indexing or performance optimization.
+* Small data volumes only.
+* No time zone handling.
+* Simplified churn logic.
+
+### Possible Improvements
+
+* Add indexes and partitions for large datasets.
+* Introduce daily snapshots for subscriptions.
+* Extend usage analytics with content-level metrics.
+* Persist detected data quality issues in a dedicated table.
+* Convert report into a stored procedure or dashboard feed.
+
+---
+
+**End of Document**
