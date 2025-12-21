@@ -1,10 +1,10 @@
 -- ==========================================================
--- Project: StreamNova Monthly Performance & Engagement Report
+-- Project: StreamNova Monthly Performance and Engagement Report
 -- File: project_report_vorontsov.sql
 -- Author: Artyom Vorontsov
 -- ==========================================================
 --
--- BUSINESS RULES & CALCULATION RULES
+-- BUSINESS RULES and CALCULATION RULES
 -- ----------------------------------------------------------
 -- 1. Month inclusion rules:
 --    - Revenue is included if PAYMENT.payment_date is within
@@ -18,7 +18,7 @@
 --      AND (end_date IS NULL OR end_date >= month_start)
 --      AND status = 'ACTIVE'
 --
--- 3. Churn & retention:
+-- 3. Churn and retention:
 --    - Churned subscriber: subscription with status = 'CANCELLED'
 --      and end_date within report month.
 --    - Active at month start: active subscriptions at month_start.
@@ -69,7 +69,7 @@ DECLARE
     v_sessions      NUMBER := 0;
 
     /* =========================
-       Churn & retention
+       Churn and retention
        ========================= */
     v_active_start  NUMBER := 0;
     v_new_subs      NUMBER := 0;
@@ -98,7 +98,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('==============================================');
 
     /* =========================
-       Revenue & Subscription Summary
+       Revenue and Subscription Summary
        ========================= */
     BEGIN
         SELECT NVL(SUM(p.amount - p.discount_amount),0),
@@ -135,7 +135,8 @@ BEGIN
         v_arpu := ROUND(v_net_revenue / v_active_subs, 2);
     END IF;
 
-    DBMS_OUTPUT.PUT_LINE('\n[Revenue & Subscription Summary]');
+    dbms_output.put_line('');
+    DBMS_OUTPUT.PUT_LINE('[Revenue and Subscription Summary]');
     DBMS_OUTPUT.PUT_LINE(' Net Revenue        : ' || v_net_revenue);
     DBMS_OUTPUT.PUT_LINE(' Previous Month Rev : ' || v_prev_net_revenue);
     DBMS_OUTPUT.PUT_LINE(' Total Discounts    : ' || v_total_discounts);
@@ -146,7 +147,8 @@ BEGIN
     /* =========================
        Plan performance
        ========================= */
-    DBMS_OUTPUT.PUT_LINE('\n[Plan Performance]');
+    dbms_output.put_line('');
+    DBMS_OUTPUT.PUT_LINE('[Plan Performance]');
     FOR r IN (
         SELECT pl.plan_name,
                COUNT(DISTINCT s.subscription_id) active_subs,
@@ -176,7 +178,8 @@ BEGIN
     AND    us.session_start <  v_month_end
     AND    (p_region_filter = 'ALL' OR u.region = p_region_filter);
 
-    DBMS_OUTPUT.PUT_LINE('\n[Engagement Metrics]');
+    dbms_output.put_line('');
+    DBMS_OUTPUT.PUT_LINE('[Engagement Metrics]');
     DBMS_OUTPUT.PUT_LINE(' Total Watch Minutes : ' || v_total_minutes);
     DBMS_OUTPUT.PUT_LINE(' Total Sessions      : ' || v_sessions);
 
@@ -194,7 +197,7 @@ BEGIN
     END LOOP;
 
     /* =========================
-       Churn & retention
+       Churn and retention
        ========================= */
     SELECT COUNT(*) INTO v_active_start
     FROM   subscriptions
@@ -224,7 +227,8 @@ BEGIN
         v_retention_rate := ROUND(100 - v_churn_rate, 2);
     END IF;
 
-    DBMS_OUTPUT.PUT_LINE('\n[Churn & Retention]');
+    dbms_output.put_line('');
+    DBMS_OUTPUT.PUT_LINE('[Churn and Retention]');
     DBMS_OUTPUT.PUT_LINE(' Active at Start : ' || v_active_start);
     DBMS_OUTPUT.PUT_LINE(' New Subscribers : ' || v_new_subs);
     DBMS_OUTPUT.PUT_LINE(' Churned         : ' || v_churned);
@@ -235,7 +239,8 @@ BEGIN
     /* =========================
        Data quality checks
        ========================= */
-    DBMS_OUTPUT.PUT_LINE('\n[Data Quality Checks]');
+    dbms_output.put_line('');
+    DBMS_OUTPUT.PUT_LINE('[Data Quality Checks]');
 
     SELECT COUNT(*) INTO v_sessions
     FROM   payments
