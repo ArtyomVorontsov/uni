@@ -120,7 +120,3 @@ CREATE TABLE data_quality_issues (
     entity_id    NUMBER,
     description  VARCHAR2(400)
 );
-
--- =========================
--- End of DDL
--- =========================
