@@ -1,0 +1,19 @@
+PM 
+
+Project base:
+	1) timeline
+		- start date
+		- end date
+	2) goal
+	3) resources
+
+5 project management stages
+* initiation
+* planning
+* execution
+* closing 
+* controlling
+
+what is main goal of a company? - survive
+
+how amazon works? -> operational excelence 
