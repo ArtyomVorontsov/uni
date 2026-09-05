@@ -1,0 +1,5 @@
+# NestJS backend ignore rules
+node_modules/
+dist/
+.env
+*.log

@@ -1,0 +1,6 @@
+# React frontend ignore rules
+node_modules/
+build/
+.env
+.env.local
+*.log
