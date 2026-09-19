@@ -10,8 +10,18 @@ export class FlightController {
   @Get('live')
   @ApiOperation({ summary: 'Get real-time tracked flights from OpenSky API / DB cache' })
   @ApiResponse({ status: 200, description: 'List of active aircraft state vectors' })
-  async getLiveFlights(): Promise<FlightDto[]> {
-    return this.flightService.fetchLiveFlights();
+  async getLiveFlights(
+    @Query('lamin') lamin?: string,
+    @Query('lomin') lomin?: string,
+    @Query('lamax') lamax?: string,
+    @Query('lomax') lomax?: string,
+  ): Promise<FlightDto[]> {
+    return this.flightService.fetchLiveFlights(
+      lamin ? parseFloat(lamin) : undefined,
+      lomin ? parseFloat(lomin) : undefined,
+      lamax ? parseFloat(lamax) : undefined,
+      lomax ? parseFloat(lomax) : undefined,
+    );
   }
 
   @Get('stats')

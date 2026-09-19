@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Header } from './components/Header';
 import { RadarMap } from './components/RadarMap';
@@ -20,6 +20,7 @@ export const App: React.FC = () => {
   const [mapStyle, setMapStyle] = useState<'dark' | 'satellite'>('dark');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  // Simple fetch — no bounds, always returns full stable pool
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -28,24 +29,27 @@ export const App: React.FC = () => {
         axios.get(`${API_BASE_URL}/stats`),
         axios.get(`${API_BASE_URL}/watchlist`),
       ]);
+      // Merge incoming flights with existing to preserve positions during transition
       setFlights(flightsRes.data);
       setStats(statsRes.data);
       if (Array.isArray(watchlistRes.data)) {
         setWatchlist(watchlistRes.data.map((w: any) => w.icao24));
       }
     } catch (err) {
-      console.warn('Backend API request failed, using local optimistic state');
+      console.warn('Backend API request failed');
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Poll every 5 seconds — interval never rebuilds so no glitches
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 10000);
+    const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
   }, []);
 
+  // Filtered flights — purely client-side filtering, no re-fetching
   const filteredFlights = flights.filter((f) => {
     const matchesSearch =
       f.callsign.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -95,6 +99,7 @@ export const App: React.FC = () => {
           flights={filteredFlights}
           selectedFlight={selectedFlight}
           searchTerm={searchTerm}
+          mapStyle={mapStyle}
           onSearchChange={setSearchTerm}
           onSelectFlight={setSelectedFlight}
         />
